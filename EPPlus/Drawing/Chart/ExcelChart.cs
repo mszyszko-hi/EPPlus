@@ -402,6 +402,7 @@ namespace OfficeOpenXml.Drawing.Chart
            Part = part;
            ChartXml = chartXml;
            _chartNode = chartNode;
+           ChartType = GetInitialChartType(chartNode.LocalName);
            InitChartLoad(drawings, chartNode);
            ChartType = GetChartType(chartNode.LocalName);
        }
@@ -413,7 +414,7 @@ namespace OfficeOpenXml.Drawing.Chart
            ChartXml = topChart.ChartXml;
            _plotArea = topChart.PlotArea;
            _chartNode = chartNode;
-
+           ChartType = GetInitialChartType(chartNode.LocalName);
            InitChartLoad(topChart._drawings, chartNode);
        }
        private void InitChartLoad(ExcelDrawings drawings, XmlNode chartNode)
@@ -574,6 +575,56 @@ namespace OfficeOpenXml.Drawing.Chart
        //        }
        //    }
        //}
+       private eChartType GetInitialChartType(string name)
+       {
+           
+           switch (name)
+           {
+               case "area3DChart":
+                   if(Grouping==eGrouping.Stacked)
+                   {
+                       return eChartType.AreaStacked3D;
+                   }
+                   else if (Grouping == eGrouping.PercentStacked)
+                   {
+                       return eChartType.AreaStacked1003D;
+                   }
+                   else
+                   {
+                       return eChartType.Area3D;
+                   }
+               case "areaChart":
+                   if (Grouping == eGrouping.Stacked)
+                   {
+                       return eChartType.AreaStacked;
+                   }
+                   else if (Grouping == eGrouping.PercentStacked)
+                   {
+                       return eChartType.AreaStacked100;
+                   }
+                   else
+                   {
+                       return eChartType.Area;
+                   }
+               case "doughnutChart":
+                   return eChartType.Doughnut;
+               case "pie3DChart":
+                   return eChartType.Pie3D;
+               case "pieChart":
+                   return eChartType.Pie;
+               case "radarChart":
+                   return eChartType.Radar;
+               case "scatterChart":
+                   return eChartType.XYScatter;
+               case "surface3DChart":
+               case "surfaceChart":
+                   return eChartType.Surface;
+               case "stockChart":
+                   return eChartType.StockHLC;
+               default:
+                   return 0;
+           }           
+       }
        internal virtual eChartType GetChartType(string name)
        {
            
